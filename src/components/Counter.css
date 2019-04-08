@@ -1,0 +1,50 @@
+div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: 30px;
+}
+
+button {
+  font-size: 22px;
+  color: midnightblue;
+  outline: none;
+  margin: 10px;
+  height: 40px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.plus,
+.minus {
+  width: 40px;
+}
+
+.odd,
+.async {
+  width: 200px;
+}
+
+.plus {
+  background-color: darkseagreen;
+  border: 1px solid darkseagreen;
+}
+
+.minus {
+  background-color: lightpink;
+  border: 1px solid lightpink;
+}
+
+.odd {
+  background-color: powderblue;
+  border: 1px solid powderblue;
+}
+
+.async {
+  background-color: navajowhite;
+  border: 1px solid navajowhite;
+}
