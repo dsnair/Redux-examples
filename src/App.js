@@ -14,12 +14,30 @@ const App = () => {
     setNewTodo('')
   }
 
+  const toggleDone = id => {
+    const newTodoArr = [...todoArr]
+    newTodoArr.splice(id, 1, {
+      ...todoArr[id],
+      done: !todoArr[id].done
+    })
+    setTodoArr(newTodoArr)
+  }
+
   return (
     <div className="app">
       {todoArr.map(obj => (
         <div className="todoArr" key={obj.id}>
-          <input value={obj.todo} type="text" readOnly />
-          <button>&#10003;</button>
+          <input
+            value={obj.todo}
+            style={
+              obj.done
+                ? { textDecoration: 'line-through', textDecorationColor: 'orangered' }
+                : { textDecoration: 'none' }
+            }
+            type="text"
+            readOnly
+          />
+          <button onClick={() => toggleDone(obj.id)}>&#10003;</button>
         </div>
       ))}
 
