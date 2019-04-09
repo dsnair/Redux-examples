@@ -1,0 +1,6 @@
+.app {
+  border: 1px solid gainsboro;
+  width: 600px;
+  min-height: 400px;
+  padding: 10px;
+}

@@ -1,33 +1,68 @@
-# Redux Counter
+# Redux & React
 
-## Topics
+Topics:
 
-- Immutability in JavaScript
-- Redux
-- Actions
-- Reducers
-- The central store
-- Connecting React components to Redux
+- `redux` package
+- `react-redux` package
+- Redux state vs react component state
+- `<Provider>` and `createStore(reducer)`
+- One state object for entire application
+- `reducer` functions control the values for the state properties.
+- `container` components are React components that connect to the Redux state
+- `actions` - objects produced by `action creators` that will be fed through all reducers.
+- `mapStateToProps()` & `connect`
 
-![alt text](https://camo.githubusercontent.com/9de527b9432cc9244dc600875b46b43311918b59/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6d656469612d702e736c69642e65732f75706c6f6164732f3336343831322f696d616765732f323438343739302f415243482d5265647578322d657874656e6465642d7265616c2d6465636c657261746976652e676966)
+## Project Description
 
-In this Project, you'll be eased into the code base of a small Redux application. The application itself is just a counter with increment and decrement buttons.
+### Initialize Project
 
-### Counter Project
+- Run `create-react-app todo` to create your starter application.
+- Now that you have created your `todo` directory, cd into it.
+- `yarn add redux react-redux` or `npm install --save redux react-redux` This command will install the needed dependencies.
+- You will create a todo list using React and Redux.
+- Use the movies project as a reference.
+- The general flow of steps will be to create your store, create your reducers, create your containers, and then create the action creators.
+- When you add a new item to the todo array an action containing the new todo object will be dispatched through all of the reducers.
+- To display the todo list you will create a container that receives the `todos` array as a prop and then uses `map` to display it as an unordered list.
 
-- The increment button should increment the counter by 1.
-- Conversely, the decrement button should decrement the counter by 1. The aim of this project is to familiarize you with the overarching data flow pattern of Redux, as well as exposing you to how Redux is typically hooked up to a React application.
+### State Tree
 
-- To run the project code, use the command `yarn` from the root directory to install your `node_modules`, then `yarn start`. You'll see that the application isn't working.
-- There are a couple of spots in the application where you'll need to write the code to get the application functional.
-- These spots are in `reducers/index.js`, `actions/index.js`, and `components/Counter.js`.
+- Your application should have an input field, a submit button, and a list of items that represents your todo list.
+- Your application's state tree should have a single property called `todos`. It should take the same form as the object shown below.
 
-The code is pretty heavily commented. This is to help clear up everything that is going on with the code you have been provided.
+```
+{
+ todos: []
+}
+```
 
-> When it comes to setting up a Redux application and hooking it up to React components, there is a decent amount of boilerplate, but the benefits that Redux gives you when it comes to predictability and simplicity of your data flow are worth it - especially when your application scales out and becomes much larger!
+- Each `todo` item that is in the `todos` array should have the following format:
 
-Take your time walking around the code base. There are lots of informative little tidbits in the comments that you won't want to miss. **_I highly encourage you to look at every file first before trying to write any code._**
+```
+{
+  value: 'Walk the dog.',
+  completed: false
+}
+```
 
-If you end up finishing quickly, you'll see there are a few Stretch Problem prompts at the top of the `Counter.js` component file. Feel free to take a stab at implementing those. Or, you could take a look at the awesome Redux documentation [here](http://redux.js.org/docs/basics/).
+- You will create your store in `src/index.js`. The `<Provider >` component will wrap `<App />` and you will pass the created store into `<Provider >` as one of its properties. Use [this](https://github.com/SunJieMing/redux-example-movies) repository as a reference.
 
-Good luck and have fun!
+### React
+
+- When you type a new todo list item into the input field and press the submit button you should call an action creator that adds a new todo item to the `todos` array on the application state tree.
+- When the user presses submit you will invoke the appropriate action creator which will then have its new action fed through all of the reducers.
+- You will display the todo list by creating a container that receives the application's `todos` array as a prop. That container then uses `map` to display the array.
+- When you click on each todo list item you will dispatch an action that will toggle that todo item's `completed` property to either `true` or `false`. You will need to send the `id` property along with what `completed` should be set to. The `todos` reducer will return a brand new array that will replace the old array. We do not mutate the original array but rather replace it with a brand new version.
+
+### Notes/Hints
+
+- You should only need one reducer. This reducer will control the `todos` array property on the state tree.
+- You will have several action creators. One for adding a new todo item and another for toggling each todo item.
+- Containers require `connect` and a `mapStateToProps(state)` function to read from the state tree.
+- Actions creators should be passed inside an object as the second argument to the `connect` function inside components that need access to the Redux store.
+- http://redux.js.org/ has a todo list as an example project in their documentation. Feel free to use this as a reference as well.
+
+## Stretch Problem
+
+- Implement the ability to delete todo list items. You can create a button next to each todo list item and when it is pressed it will call an action creator that will dispatch an action that removes the specified todo list item from the `todos` array.
+- Use `localStorage` to make the data persist.
