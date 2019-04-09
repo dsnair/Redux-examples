@@ -1,35 +1,41 @@
 .app {
   border: 1px solid gainsboro;
-  width: 600px;
+  width: 500px;
   min-height: 400px;
   padding: 10px;
 }
 
-.app form {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .app input[type='text'] {
-  outline: none;
-  width: 500px;
+  outline: 0;
+  border: 0;
+  border-bottom: 1px solid gainsboro;
+  width: 400px;
   height: 30px;
   font-size: 16px;
   padding: 0 5px;
+  margin: 5px;
 }
 
 .app input[type='text']::placeholder {
   font-size: 14px;
 }
 
-.app button {
-  background-color: darkseagreen;
-  height: 30px;
-  width: 50px;
-  font-size: 14px;
-}
-
 .app button:hover {
   cursor: pointer;
+  background-color: darkseagreen
+}
+
+.todoArr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.todoArr button {
+  border: 1px solid darkseagreen;
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  font-size: 20px;
+  color: forestgreen;
 }
