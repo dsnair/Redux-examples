@@ -4,3 +4,32 @@
   min-height: 400px;
   padding: 10px;
 }
+
+.app form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app input[type='text'] {
+  outline: none;
+  width: 500px;
+  height: 30px;
+  font-size: 16px;
+  padding: 0 5px;
+}
+
+.app input[type='text']::placeholder {
+  font-size: 14px;
+}
+
+.app button {
+  background-color: darkseagreen;
+  height: 30px;
+  width: 50px;
+  font-size: 14px;
+}
+
+.app button:hover {
+  cursor: pointer;
+}
