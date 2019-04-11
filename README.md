@@ -1,68 +1,85 @@
-# Redux & React
+# Redux Friends
 
 Topics:
 
-- `redux` package
-- `react-redux` package
-- Redux state vs react component state
-- `<Provider>` and `createStore(reducer)`
-- One state object for entire application
-- `reducer` functions control the values for the state properties.
-- `container` components are React components that connect to the Redux state
-- `actions` - objects produced by `action creators` that will be fed through all reducers.
-- `mapStateToProps()` & `connect`
+* React Router
+* `axios` package
+* AJAX
+* Promises
+* Middleware
+* `redux-thunk` package
+* Authentication tokens
+* optional: `redux-logger` package
 
 ## Project Description
 
-### Initialize Project
+* Last week we built an app that interfaced with a `RESTful` API. That same project is now to be built using React & Redux.
+* Take your examples from the mini project and use them to build a more sophisticated Application. Have fun!
+* Once your server is up and running, the URL you'll be able to hit from within your action creators is `http://localhost:5000`. You will however need an authentication header on all the calls except the login call.
+* Take a look at the endpoints that our API has to offer in `server.js`.
 
-- Run `create-react-app todo` to create your starter application.
-- Now that you have created your `todo` directory, cd into it.
-- `yarn add redux react-redux` or `npm install --save redux react-redux` This command will install the needed dependencies.
-- You will create a todo list using React and Redux.
-- Use the movies project as a reference.
-- The general flow of steps will be to create your store, create your reducers, create your containers, and then create the action creators.
-- When you add a new item to the todo array an action containing the new todo object will be dispatched through all of the reducers.
-- To display the todo list you will create a container that receives the `todos` array as a prop and then uses `map` to display it as an unordered list.
+  * **[POST]** * to `/api/login`: returns a token to be added to the header of all other requests. Pass in the following credentials as the `body` of the request: `{ username: 'Lambda School', password: 'i<3Lambd4' }`
+  * **[GET]** to `/api/friends`: returns the list of friends.
+  * **[GET]** to `/api/friends/123`: returns the friend with the id passed as part of the URL (123 in example).
+  * **[POST]** to `/api/friends`: creates a friend and return the new list of friends. Pass the friend as the `body` of the request (the second argument passed to `axios.post`).
+  * **[PUT]** to `/api/friends/:id`: updates the friend using the `id` passed as part of the URL. Send the an object with the updated information as the `body` of the request (the second argument passed to `axios.put`).
+  * **[DELETE]** to `/api/friends/123`: removes the friend using the `id` passed as part of the URL (123 in example).
 
-### State Tree
+## Initialize Project
 
-- Your application should have an input field, a submit button, and a list of items that represents your todo list.
-- Your application's state tree should have a single property called `todos`. It should take the same form as the object shown below.
+* Run `yarn` or `npm i` inside the root directory of this project to install dependencies.
+* Run `yarn start` or `npm start` to start the API server.
+* Run `create-react-app friends` in a separate terminal window in the root directory of the project to create your starter application.
+* `cd` into the _friends_ folder and type `yarn add redux react-redux redux-thunk redux-logger axios react-router-dom` which will install the needed dependencies.
+* To start out, create a reducer that will be passed as the rootReducer to `createStore`. Start with a pretty simple initialState object that has a `friends` property set as an empty array. Your state tree will grow pretty large as you build out more and more actions.
+* Don't forget to hook up the store using the `Provider` tag inside of `src/index.js`, passing it your newly created store.
+* You will need to use `redux-thunk` as a middleware inside of `src/index.js`. You'll want to be sure to pass it to `applyMiddleware()` then feed it into your createStore function.
+* If you so choose, include `redux-logger` to your middleware. You're going to have plenty of action creators that will consume our API so you'll get plenty of actions triggered.
 
-```
+## Build the App!
+* Add a route for a login page and build out a simple login form with username and password inputs and a submit button (design this however you would like).
+* The login action creator should dispatch a "logging in" action, return the promise created by `axios.post`, then save the returned token to localStorage. You can connect your Login component, and show a spinner on your form or in your button while the login request is happening.
+* When the request returns, use the history object in your Login component to navigate your user to your FriendsList route
+* Create a `<PrivateRoute />` component to protect your other routes. It should check localStorage for a token, and redirect the user to your login route if there is not a token.
+* Create a protected route for your friends list. Remember, if the user isn't logged in, navigating to this protected route will redirect them to the login page.
+* In your FriendsList component, rendered with `<ProtectedRoute />`, you will create a list of your friends that you get from the API using React and Redux.
+
+## Root Reducer and our State Tree
+
+* Your initial state **could** (but doesn't have to) look something like this:
+
+```js
 {
- todos: []
+  deletingFriend: false,
+  fetchingFriends: false,
+  friends: [],
+  loggingIn: false,
+  savingFriends: false,
+  updatingFriend: false,
+  error: null
 }
 ```
 
-- Each `todo` item that is in the `todos` array should have the following format:
+* This is a pretty large state tree, but each field is extremely simple.
+* All of your items in your state tree represent a make up of actions that you're going to make asynchronously. Think about your application and the state you need. This root reducer object will represent that state.
+* Each `friend` item that is in the `friends` array should have the following format:
 
-```
+```js
 {
-  value: 'Walk the dog.',
-  completed: false
+  id: 1
+  name: 'Joe',
+  age: 24,
+  email: 'joe@lambdaschool.com',
 }
 ```
 
-- You will create your store in `src/index.js`. The `<Provider >` component will wrap `<App />` and you will pass the created store into `<Provider >` as one of its properties. Use [this](https://github.com/SunJieMing/redux-example-movies) repository as a reference.
+## Project
 
-### React
-
-- When you type a new todo list item into the input field and press the submit button you should call an action creator that adds a new todo item to the `todos` array on the application state tree.
-- When the user presses submit you will invoke the appropriate action creator which will then have its new action fed through all of the reducers.
-- You will display the todo list by creating a container that receives the application's `todos` array as a prop. That container then uses `map` to display the array.
-- When you click on each todo list item you will dispatch an action that will toggle that todo item's `completed` property to either `true` or `false`. You will need to send the `id` property along with what `completed` should be set to. The `todos` reducer will return a brand new array that will replace the old array. We do not mutate the original array but rather replace it with a brand new version.
-
-### Notes/Hints
-
-- You should only need one reducer. This reducer will control the `todos` array property on the state tree.
-- You will have several action creators. One for adding a new todo item and another for toggling each todo item.
-- Containers require `connect` and a `mapStateToProps(state)` function to read from the state tree.
-- Actions creators should be passed inside an object as the second argument to the `connect` function inside components that need access to the Redux store.
-- http://redux.js.org/ has a todo list as an example project in their documentation. Feel free to use this as a reference as well.
+* If you'd like, you can create multiple "view" components for your routes and `connect` them all up to your `redux` state tree. You could have a component who's sole purpose is to render the login form; one for a form for updating a user; another component who's sole purpose is for creating users; and then another component who's sole purpose is to delete a user.
+* It really is up to you how you build this project. I suggest writing down the flow you want to follow, and then writing down each individual piece you need for each step in the flow (ie step 3, build containers - import connect, write mapStateToProps function, import action creators and pass them to connect, etc. etc.) so that this process doesn't feel as overwhelming.
 
 ## Stretch Problem
 
-- Implement the ability to delete todo list items. You can create a button next to each todo list item and when it is pressed it will call an action creator that will dispatch an action that removes the specified todo list item from the `todos` array.
-- Use `localStorage` to make the data persist.
+* In the requirements for this project, we implemented a login POST operation, a GET operation, and a "add friend" POST operation. Add two more actions, one for making a PUT request, and the other for making a DELETE request.
+* Style the friends list and the input field and make everything look nice.
+* Expand the number of properties that you put on each friend object. Feel free to remove the dummy data on the server or modify it in any way.
