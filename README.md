@@ -1,68 +1,124 @@
-# Redux & React
+# Redux Swapi
 
-Topics:
+## Topics
 
-- `redux` package
-- `react-redux` package
-- Redux state vs react component state
-- `<Provider>` and `createStore(reducer)`
-- One state object for entire application
-- `reducer` functions control the values for the state properties.
-- `container` components are React components that connect to the Redux state
-- `actions` - objects produced by `action creators` that will be fed through all reducers.
-- `mapStateToProps()` & `connect`
+- Middleware and applyMiddleware
+- redux-thunk
+- redux-logger
 
-## Project Description
+## Description
 
-### Initialize Project
-
-- Run `create-react-app todo` to create your starter application.
-- Now that you have created your `todo` directory, cd into it.
-- `yarn add redux react-redux` or `npm install --save redux react-redux` This command will install the needed dependencies.
-- You will create a todo list using React and Redux.
-- Use the movies project as a reference.
-- The general flow of steps will be to create your store, create your reducers, create your containers, and then create the action creators.
-- When you add a new item to the todo array an action containing the new todo object will be dispatched through all of the reducers.
-- To display the todo list you will create a container that receives the `todos` array as a prop and then uses `map` to display it as an unordered list.
-
-### State Tree
-
-- Your application should have an input field, a submit button, and a list of items that represents your todo list.
-- Your application's state tree should have a single property called `todos`. It should take the same form as the object shown below.
+- Notice the file structure. There are certainly many ways by which one could layout an application.
+- This pattern is commonly used:
 
 ```
-{
- todos: []
-}
+src
+  actions
+    - index.js
+  components -
+    - index.js
+    - Character.js
+    - CharacterList.js
+  reducers
+    - index.js
+  styles
+    - App.css
+  views
+    - index.js
+    - CharacterListView.js
+  - App.js
+  - index.js
 ```
 
-- Each `todo` item that is in the `todos` array should have the following format:
+You'll notice that we are using container and presentational components to separate concerns in our app structure. The container component, found in the `views` directory, is a connected component that will receive data from the redux store. Then, it sends that data to it's children components, which are presentational components found in the `components` directory.
+
+## Initialize Project
+
+- The purpose of this mini-project is to expose you to the world of asyncronous Redux.
+- **Notice** the `package.json`. We have included a few new packages here for you.
+
+  - `redux-thunk redux-logger and axios`.
+
+- `axios` isn't something new to you, you've used it before to make **Asynchronous JavaScript and XML** requests.
+- `redux-thunk` and `redux-logger` are the technologies you'll be introduced to here.
+
+## middleware
+
+- Simply put, middleware is software that sits between our action creators and the reducer stack. Every action will first go through all middleware sequentially before it is sent to the reducers.
+- Consider something we can use to augment the powers of Redux. `redux` has a package you can use called `applyMiddleware` that will allow you to install utilities to help you achieve specific tasks.
+- We can pull in the `applyMiddleware` function directly from `redux`.
 
 ```
-{
-  value: 'Walk the dog.',
-  completed: false
-}
+import { applyMiddleware, createStore } from 'redux';
 ```
 
-- You will create your store in `src/index.js`. The `<Provider >` component will wrap `<App />` and you will pass the created store into `<Provider >` as one of its properties. Use [this](https://github.com/SunJieMing/redux-example-movies) repository as a reference.
+- We're going to use `applyMiddleware` to inject middlware into the store, specifically we'll add the `redux-thunk` and `redux-logger` middleware packages.
 
-### React
+## redux-thunk
 
-- When you type a new todo list item into the input field and press the submit button you should call an action creator that adds a new todo item to the `todos` array on the application state tree.
-- When the user presses submit you will invoke the appropriate action creator which will then have its new action fed through all of the reducers.
-- You will display the todo list by creating a container that receives the application's `todos` array as a prop. That container then uses `map` to display the array.
-- When you click on each todo list item you will dispatch an action that will toggle that todo item's `completed` property to either `true` or `false`. You will need to send the `id` property along with what `completed` should be set to. The `todos` reducer will return a brand new array that will replace the old array. We do not mutate the original array but rather replace it with a brand new version.
+- [redux-thunk](https://github.com/gaearon/redux-thunk) was built by _Dan Abramov_, co-author of Redux, to handle Asynchronous requests in Recux.
+- **What is it?** - `redux-thunk` is a middleware that we can plug into our `createStore()` method when setting up our Redux application.
+- **Why do we need it?** Well, Dan himself argues that if you have to ask that question you probably don't need it. However, the average single-page-application deals with `HTTP` requests and often times, we don't have the data back from the server we need in time for use in a synchronous flow. `redux-thunk` allows us to turn our action creators into async functions by granting them the ability to return 'functions' instead of plain objects.
+- **How do we use it?** It's pretty simple really.
 
-### Notes/Hints
+```
+import { applyMiddleware, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import { someCoolReducer } from './reducers';
 
-- You should only need one reducer. This reducer will control the `todos` array property on the state tree.
-- You will have several action creators. One for adding a new todo item and another for toggling each todo item.
-- Containers require `connect` and a `mapStateToProps(state)` function to read from the state tree.
-- Actions creators should be passed inside an object as the second argument to the `connect` function inside components that need access to the Redux store.
-- http://redux.js.org/ has a todo list as an example project in their documentation. Feel free to use this as a reference as well.
+const store = createStore(someCoolReducer, applyMiddleware(thunk));
 
-## Stretch Problem
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+```
 
-- Implement the ability to delete todo list items. You can create a button next to each todo list item and when it is pressed it will call an action creator that will dispatch an action that removes the specified todo list item from the `todos` array.
-- Use `localStorage` to make the data persist.
+- Instead of passing our initial state directly to our `createStore()` function, we can pass it `applyMiddleware` as a second argument.
+- Then, anything we add to `applyMiddleware` will have access to once we pass it to our store and set it as a property on the `<Provider />` component.
+- Set up is really that simple. The biggest changes lie in the re-design of our `action-creators`.
+- Instead of returning a simple object every time, any `http request` sent out can be done within an action creator and that function can now return another function.
+- This would look a lot like this.
+
+```
+function myCleverAction = () => dispatch => {
+  const request = axios.get('https://someRadUrlAPI.com/api/coolness);
+  request.then(({data}) => {
+    dispatch({type: GET_COOL_THING, payload: data.things});
+  })
+  .catch(err => {
+    dispatch({type: ERROR_GETTING_THINGS, error: err});
+  });
+};
+```
+
+- This is an `http` request, and at this point in time, it is a promise.
+- Our promise resolves here with data in this `.then` block.
+- Now we just call the `dispatch` method which has been exposed to us through our `thunk` middleware.
+- This looks like a lot of boiler plate, but it's actually a controlled, and eloquent solution to big problems often caused by `cross-site-scripting` and making `http` requests.
+
+## redux-logger
+
+- [redux-logger](https://github.com/evgenyrodionov/redux-logger) is a logging middleware that allows us to simply put some of the powers of the `redux dev tools` directly into our browser.
+- If you don't want to mess with configuration of Chrome packages etc., this is a really good way to tap into your `store.subscribe()` function.
+- Set up is simple, pass it into the `applyMiddleware()` method along with your `redux-thunk` middleware and you're good to go!
+
+```
+import logger from 'redux-logger';
+
+applyMiddleware(thunk, logger);
+```
+
+- As soon as your app starts dispatching actions, you'll see a very delightful log of these actions in the console :). Feel free to disable this at anytime if logs get too busy or if you just simply prefer to use the dev tools.
+
+## Project
+
+- Your project here is to build a `react-redux` application that will request some data from a 3rd party API.
+- Go ahead and run an `npm install` or `yarn` to get what you need installed here.
+- **Start** in `src/index.js`. We'll need to pull in the appropriate packages.
+- **Next** after you're all wired up in your `index`, let's move over to work on your reducers.
+- **Next** move into our `actions/index.js` file to build out the action that will be sending off the `axios` request to the `SWAPI` api, the URL is `https://swapi.co/api/people`.
+  - Hint - `console.log` will be your best friend here. As soon as you get the right data back, you'll want to make sure your _reducer_ is ready to receive it ... so there may be some back-and-forth here.
+- **Finally** wire everything up inside of your component tree. You'll do most of the work in `CharacterListView.js`. Be sure to call your action from within `componentDidMount` to trigger the request.
