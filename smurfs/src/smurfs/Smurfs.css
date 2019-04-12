@@ -1,0 +1,20 @@
+.smurfs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 500px;
+  width: 800px;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.smurf {
+  width: 200px;
+  height: 200px;
+  margin: 10px;
+  text-align: center;
+  background-color: paleturquoise;
+  color: darkslategray;
+  border-radius: 20px;
+}
